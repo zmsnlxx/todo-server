@@ -2,10 +2,11 @@ import express from 'express'
 import bodyParser from 'body-parser'
 import cookieParser from 'cookie-parser'
 import cors from 'cors'
-
-const app = express()
 import http from 'http'
 import user from './interface/user'
+
+const app = express()
+
 const PORT = 8001
 
 app.use(bodyParser.json())

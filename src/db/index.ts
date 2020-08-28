@@ -1,4 +1,4 @@
-import { Document, Model } from 'mongoose'
+import { Document } from 'mongoose'
 import mongoose from 'mongoose'
 
 mongoose.connect("mongodb://127.0.0.1:27017/todoList", (err: any) => { console.log(`数据库连接${err ? '失败' : '成功'}`) });
