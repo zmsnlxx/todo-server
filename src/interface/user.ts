@@ -2,7 +2,7 @@
 import { Request, Response } from 'express-serve-static-core'
 import db from '../db'
 import _ from 'lodash'
-import { CodeCookie, DecodeCookie, globalSend } from '../utils'
+import { CodeCookie, getCookie, globalSend } from '../utils'
 import express from 'express'
 const router = express.Router()
 
@@ -31,7 +31,7 @@ router.post('/v1/auth/register', (req: Request, res: Response) => {
     if (data) {
       globalSend(res, 500, '账号已存在！')
     } else {
-      const newUser = new db.User({ name: req.body.name, password: req.body.password, headPortrait: '', todo: [] })
+      const newUser = new db.User({ name: req.body.name, password: req.body.password, img: '', todo: [], birthday: '', gender: '', region: '', regionName: '' })
       newUser.save(err => { globalSend(res, err ? 500 : 200, `账号注册${err ? '失败' : '成功'}`) })
     }
   })
@@ -39,9 +39,13 @@ router.post('/v1/auth/register', (req: Request, res: Response) => {
 
 // 获取用户信息
 router.get('/v1/auth/getUserInfo', async (req: Request, res: Response) => {
-  const cookie = DecodeCookie(req.signedCookies.todo_token) // 获取加密cookie
-  const User = db.User.findOne({ name: cookie })
-  User.then(data => { globalSend(res, data ? 200 : 500, data ? _.pick(data, ['todo', 'name', 'headPortrait']) : '获取用户信息失败') })
+  const User = db.User.findOne({ name: getCookie(req) })
+  User.then(data => { globalSend(res, data ? 200 : 500, data ? _.pick(data, ['todo', 'name', 'img', 'birthday', 'gender', 'region', 'regionName']) : '获取用户信息失败') })
+})
+
+// 更改用户信息
+router.post('/v1/auth/updateUserInfo', async (req: Request, res: Response) => {
+  db.User.updateOne({ name: getCookie(req) }, { $set: req.body }, err => {globalSend(res, err ? 500 : 200, `编辑${err ? '失败' : '成功'}`)})
 })
 
 export default router
