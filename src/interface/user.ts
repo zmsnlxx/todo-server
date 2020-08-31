@@ -45,7 +45,18 @@ router.get('/v1/auth/getUserInfo', async (req: Request, res: Response) => {
 
 // 更改用户信息
 router.post('/v1/auth/updateUserInfo', async (req: Request, res: Response) => {
-  db.User.updateOne({ name: getCookie(req) }, { $set: req.body }, err => {globalSend(res, err ? 500 : 200, `编辑${err ? '失败' : '成功'}`)})
+  const keys = Object.keys(req.body)
+  if (keys.includes('password')) {
+    db.User.findOne({ name: getCookie(req) }).then(data => {
+      if (data?.password !== req.body.password) {
+        globalSend(res, 500, '原密码输入错误！')
+      } else {
+        db.User.updateOne({ name: getCookie(req) }, { $set: { password: req.body.newValue } }, err => { globalSend(res, err ? 500 : 200, `密码修改${err ? '失败' : '成功'}`) })
+      }
+    })
+  } else {
+    db.User.updateOne({ name: getCookie(req) }, { $set: req.body }, err => {globalSend(res, err ? 500 : 200, `编辑${err ? '失败' : '成功'}`)})
+  }
 })
 
 export default router
