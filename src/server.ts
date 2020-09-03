@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: false, }))
 // cookie加密
 app.use(cookieParser('NpLRTpy1vbBzEw2JcAxpf970kOk2RViDn5wKwrMv'))
 
-const corsOptions = { origin: ['http://localhost:8080', 'http://192.168.0.175:8080'], optionsSuccessStatus: 200, credentials: true }
+const corsOptions = { origin: ['http://192.168.0.196:8080', 'http://192.168.0.175:8080'], optionsSuccessStatus: 200, credentials: true }
 app.use(cors(corsOptions))
 app.get('/', (req: any, res: any) => { res.send('hello') })
 app.use(user)

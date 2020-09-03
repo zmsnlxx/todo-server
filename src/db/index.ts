@@ -1,7 +1,5 @@
-import { Document } from 'mongoose'
 import mongoose from 'mongoose'
-import { strict } from 'assert'
-import { stringify } from 'querystring'
+import { UserDocument } from '../types'
 
 mongoose.connect("mongodb://127.0.0.1:27017/todoList", (err: any) => { console.log(`数据库连接${err ? '失败' : '成功'}`) });
 
@@ -16,17 +14,6 @@ const User = new mongoose.Schema({
   region: String,
   regionName: String,
 });
-
-interface UserDocument extends Document {
-  name: string
-  password: string
-  img: string
-  todo: any[],
-  birthday: string,
-  gender: string,
-  region: string,
-  regionName: string
-}
 
 const db = {
   User: mongoose.model<UserDocument>("User", User)
