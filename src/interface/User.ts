@@ -2,7 +2,7 @@
 import { Request, Response } from 'express-serve-static-core'
 import db from '../db'
 import _ from 'lodash'
-import { CodeCookie, getCookie, globalSend, todo } from '../utils'
+import { CodeCookie, getCookie, getCurrentUser, globalSend, todo } from '../utils'
 import express from 'express'
 
 const router = express.Router()
@@ -32,7 +32,16 @@ router.post('/v1/auth/register', (req: Request, res: Response) => {
     if (data) {
       globalSend(res, 500, '账号已存在！')
     } else {
-      const newUser = new db.User({ name: req.body.name, password: req.body.password, img: '', birthday: '', gender: '', region: '', regionName: '', todo })
+      const newUser = new db.User({
+        name: req.body.name,
+        password: req.body.password,
+        img: '',
+        birthday: '',
+        gender: '',
+        region: '',
+        regionName: '',
+        todo
+      })
       newUser.save(err => { globalSend(res, err ? 500 : 200, `账号注册${err ? '失败' : '成功'}`) })
     }
   })
@@ -40,21 +49,15 @@ router.post('/v1/auth/register', (req: Request, res: Response) => {
 
 // 获取用户信息
 router.get('/v1/auth/getUserInfo', async (req: Request, res: Response) => {
-  const User = db.User.findOne({ name: getCookie(req) })
-  User.then(data => { globalSend(res, data ? 200 : 500, data ? _.pick(data, ['name', 'img', 'birthday', 'gender', 'region', 'regionName']) : '获取用户信息失败')})
-})
-
-// 获取用户清单列表数据
-router.get('/v1/auth/getUserCheckList', async (req: Request, res: Response) => {
-  const User = db.User.findOne({ name: getCookie(req) })
-  User.then(data => { globalSend(res, data ? 200 : 500, data ? _.get(data, 'todo') : '获取清单列表失败')})
+  const User = getCurrentUser(req)
+  User.then(data => { globalSend(res, data ? 200 : 501, data ? _.pick(data, ['name', 'img', 'birthday', 'gender', 'region', 'regionName']) : '获取用户信息失败')})
 })
 
 // 更改用户信息
 router.post('/v1/auth/updateUserInfo', async (req: Request, res: Response) => {
   const keys = Object.keys(req.body)
   if (keys.includes('password')) {
-    db.User.findOne({ name: getCookie(req) }).then(data => {
+    getCurrentUser(req).then(data => {
       if (data?.password !== req.body.password) {
         globalSend(res, 500, '原密码输入错误！')
       } else {

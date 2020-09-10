@@ -4,7 +4,7 @@ interface UserDocument extends Document {
   name: string
   password: string
   img: string
-  todo: TodoItem[],
+  todo: TodoItem,
   birthday: string,
   gender: string,
   region: string,
@@ -12,15 +12,17 @@ interface UserDocument extends Document {
 }
 
 interface TodoItem {
-  label: string
-  id: string
-  list: TodoListItem[]
+  [id: string]: {
+    title: string
+    list: TodoListItem[]
+  }
 }
 
 interface TodoListItem {
-  label: string
+  title: string
   id: string
   isCarryOut: boolean //是否已完成
-  endTime: string // 结束时间
-  isMark: boolean // 是否是星标任务
+  endTime: number | undefined // 结束时间(时间戳)
+  grade: string // 任务等级 0： 无优先级； 1：低优先级；2：中优先级；3：高优先级
+  content: string // 任务内容
 }
