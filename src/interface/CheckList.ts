@@ -31,11 +31,12 @@ router.get('/v1/list/getListTask', async (req: Request, res: Response) => {
 
 // 编辑清单任务
 router.post('/v1/list/updateListTask', async (req: Request, res: Response) => {
-  if (req.body.id) {
+  const { id, parentId } = req.body
+  if (id) {
     try {
       db.User.updateOne(
-        { name: getCookie(req), [`todo.${req.body.parentId}.list.id`]: req.body.id },
-        { $set: { [`todo.${req.body.parentId}.list.$`]: req.body } },
+        { name: getCookie(req), [`todo.${parentId}.list.id`]: id },
+        { $set: { [`todo.${parentId}.list.$`]: _.omit(req.body, 'parentId') } },
       ).then(() => {
         globalSend(res, 200, '编辑成功')
       })
@@ -46,7 +47,7 @@ router.post('/v1/list/updateListTask', async (req: Request, res: Response) => {
     try {
       db.User.updateOne(
         { name: getCookie(req) },
-        { $push: { [`todo.${req.body.parentId}.list`]: { ..._.pick(req.body, ['endTime', 'isCarryOut', 'grade', 'title', 'content']), id: setRandomId() } } },
+        { $push: { [`todo.${parentId}.list`]: { ..._.pick(req.body, ['endTime', 'isCarryOut', 'grade', 'title', 'content']), id: setRandomId() } } },
       ).then(() => {
         globalSend(res, 200, '添加成功')
       })
@@ -58,10 +59,11 @@ router.post('/v1/list/updateListTask', async (req: Request, res: Response) => {
 
 // 删除清单任务
 router.post('/v1/list/deleteListTask', async (req: Request, res: Response) => {
+  const { id, parentId } = req.body
   try {
     db.User.updateOne(
       { name: getCookie(req) },
-      { $pull: { [`todo.${req.body.parentId}.list.id`]: req.body.id } },
+      { $pull: { [`todo.${parentId}.list`]: { id } } },
     ).then(() => {
       globalSend(res, 200, '删除成功')
     })
