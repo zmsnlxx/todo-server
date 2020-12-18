@@ -5,7 +5,8 @@
   "main": "./src/server.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon ./src/server.ts"
+    "dev": "cross-env NODE_ENV=development nodemon src/server.ts",
+    "prod": "cross-env NODE_ENV=production nodemon src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +28,7 @@
     "@types/lodash": "^4.14.158",
     "@types/mongoose": "^5.7.34",
     "@types/node": "^14.0.27",
+    "cross-env": "^7.0.3",
     "ts-node": "^8.10.2"
   }
 }
