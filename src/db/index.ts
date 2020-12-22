@@ -1,8 +1,8 @@
 import mongoose from 'mongoose'
 import { UserDocument } from '../types'
-const dbName = process.env.NODE_ENV === 'production' ? 'todo' : 'todoTest'
+import { DB_Name } from '../../constant'
 
-mongoose.connect(`mongodb://127.0.0.1:27017/${dbName}`, (err: any) => { console.log(`数据库连接${err ? '失败' : '成功'}`) });
+mongoose.connect(`mongodb://127.0.0.1:27017/${DB_Name}`, (err: any) => { console.log(`数据库连接${err ? '失败' : '成功'}`) });
 
 // 用户信息表
 const User = new mongoose.Schema({
