@@ -4,6 +4,7 @@ import db from '../db'
 import _ from 'lodash'
 import { CodeCookie, getCookie, getCurrentUser, globalSend, todo } from '../utils'
 import express from 'express'
+import { DO_MAIN } from '../../constant'
 
 const router = express.Router()
 
@@ -14,7 +15,7 @@ router.post('/v1/auth/login', (req: Request, res: Response) => {
     if (data) {
       if (data.password === req.body.password) {
         // 设置cookie有效期，单位是秒
-        res.cookie('todo_token', CodeCookie(data.name), { maxAge: 1000 * 60 * 60 * 24, signed: true })
+        res.cookie('todo_token', CodeCookie(data.name), { maxAge: 1000 * 60 * 60 * 24, signed: true, httpOnly: true, domain: DO_MAIN })
         globalSend(res, 200, '登录成功')
       } else {
         globalSend(res, 500, '密码错误！')
